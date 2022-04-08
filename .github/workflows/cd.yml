@@ -1,0 +1,17 @@
+name: continuous-delivery
+on:
+  push:
+    branches: [main]
+jobs:
+  semver-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CICD_GITHUB_REPOSITORY_TOKEN }}
+      - uses: ohpensource/platform-cicd/actions/git/generate-version-and-release-notes@2.0.1.0
+        name: semver & changelog
+        with:
+          user-email: "github-svc@ohpen.com"
+          user-name: "GitHub Actions"

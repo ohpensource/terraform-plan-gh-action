@@ -1,0 +1,42 @@
+name: "terraform-plan"
+description: "plans a terraform configuration"
+inputs:
+  region:
+    description: "aws region name"
+    required: true
+  access-key:
+    description: "access key"
+    required: true
+  secret-key:
+    description: "secret key"
+    required: true
+  terraform-folder:
+    description: "folder where your terraform configuration is"
+    required: true
+  backend-configuration:
+    description: "file with additional backend configuration"
+    required: true
+  terraform-var-file:
+    description: "file with the terraform variables (.tfvars or .tfvars.json)"
+    required: true
+  terraform-plan-file:
+    description: "file where terraform will put the proposed plan"
+    required: true
+  destroy-mode:
+    description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
+    required: false
+    default: 'false'
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        ${{ github.action_path }}/../tfm-plan.sh \
+          -r "${{ inputs.region }}" \
+          -a "${{ inputs.access-key }}" \
+          -s "${{ inputs.secret-key }}" \
+          -t "${{ inputs.terraform-folder }}" \
+          -b "${{ inputs.backend-configuration }}" \
+          -v "${{ inputs.terraform-var-file }}" \
+          -p "${{ inputs.terraform-plan-file }}" \
+          -d "${{ inputs.destroy-mode }}"
+      shell: bash

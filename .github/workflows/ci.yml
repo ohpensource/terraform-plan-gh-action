@@ -1,0 +1,46 @@
+name: continuous-integration
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  check-conventional-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ohpensource/platform-cicd/actions/git/ensure-conventional-commits@2.16.0.0
+        name: Ensure conventional commits
+        with:
+          base-branch: $GITHUB_BASE_REF
+          pr-branch: $GITHUB_HEAD_REF
+
+  check-jira-tickets-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ohpensource/platform-cicd/actions/git/ensure-commits-message-jira-ticket@2.16.0.0
+        name: Ensure Jira ticket in all commits
+        with:
+          base-branch: $GITHUB_BASE_REF
+          pr-branch: $GITHUB_HEAD_REF
+  
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v14.3
+        with:
+          files: "README.md"
+      - name: ensure-documentation-is-added
+        if: steps.changed-files.outputs.any_modified == 'false'
+        uses: actions/github-script@v3
+        with:
+          script: |
+              core.setFailed('Include documentation in the README.md file!')
