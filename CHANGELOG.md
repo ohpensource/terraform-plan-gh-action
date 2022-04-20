@@ -1,3 +1,9 @@
+# :confetti_ball: 0.0.2.0 (2022-04-20T14:15:36.259Z)
+- - -
+## :bug: Fixes
+* fixed another wrong parameter named in the readme
+- - -
+- - -
 # :confetti_ball: 0.0.1.0 (2022-04-20T14:04:11.907Z)
 - - -
 ## :bug: Fixes
