@@ -1,3 +1,9 @@
+# :confetti_ball: 0.0.1.0 (2022-04-20T14:04:11.907Z)
+- - -
+## :bug: Fixes
+* fixed wrong parameter named in the readme
+- - -
+- - -
 # :confetti_ball: 0.0.0.1 (2022-04-08T11:06:38.974Z)
 - - -
 ## :newspaper: Others
