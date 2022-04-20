@@ -56,7 +56,7 @@ jobs:
           access-key: $COR_AWS_ACCESS_KEY_ID
           secret-key: $COR_AWS_SECRET_ACCESS_KEY
           terraform-folder: "deployment-folder/terraform"
-          backend-configuration: "deployment-team-branch-conf/backend.tfvars"
+          backend-configuration: "deployment-team-branch-conf/backend.tf"
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
 ```
