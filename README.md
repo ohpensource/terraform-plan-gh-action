@@ -58,5 +58,5 @@ jobs:
           terraform-folder: "deployment-folder/terraform"
           backend-configuration: "deployment-team-branch-conf/backend.tfvars"
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
-          terraform-state-file: "deployment-team-branch-plan/tfplan"
+          terraform-plan-file: "deployment-team-branch-plan/tfplan"
 ```
