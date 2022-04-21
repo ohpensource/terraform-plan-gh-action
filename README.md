@@ -60,3 +60,39 @@ jobs:
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
 ```
+
+#### plan to destroy resources?
+
+you can provide the parameter `destroy-mode: "true"`. Full example: 
+
+```yaml
+name: CI
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  plan-team-branch-deployment:
+    needs: [configure-team-branch-environment, download-artifacts]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: deployment-folder
+          path: deployment-folder
+      - uses: actions/download-artifact@v2
+        with:
+          name: deployment-team-branch-conf
+          path: deployment-team-branch-conf
+      - uses: ohpensource/terraform-plan-gh-action/action@0.0.0.1
+        name: terraform plan
+        with:
+          region: $REGION
+          access-key: $COR_AWS_ACCESS_KEY_ID
+          secret-key: $COR_AWS_SECRET_ACCESS_KEY
+          terraform-folder: "deployment-folder/terraform"
+          backend-configuration: "deployment-team-branch-conf/backend.tf"
+          terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
+          terraform-plan-file: "deployment-team-branch-plan/tfplan"
+          destroy-mode: "true"
+```
