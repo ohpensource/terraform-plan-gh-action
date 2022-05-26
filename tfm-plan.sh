@@ -53,9 +53,28 @@ mkdir -p $(dirname $tfplan_output)
 folder="$working_folder/$tfm_folder"
 cd $folder
     terraform init -backend-config="$backend_config_file"
+    set +e  # disable stop running if exit code different from 0
     if [ "$destroy_mode" = "true" ]; then 
-        terraform plan -destroy -var-file="$tfvars_file" -out="$tfplan_output"
+        terraform plan -destroy -var-file="$tfvars_file" -out="$tfplan_output" -detailed-exitcode
     else
-        terraform plan -var-file="$tfvars_file" -out="$tfplan_output"
+        terraform plan -var-file="$tfvars_file" -out="$tfplan_output" -detailed-exitcode
     fi
+    tf_plan_exit_code=$?
+    set -e  # enable stop running if exit code different from 0
 cd "$working_folder"
+
+log_key_value_pair "tf_plan_exit_code" $tf_plan_exit_code
+
+case "$tf_plan_exit_code" in
+    2)
+        log_action "changes detected to be added to the job summary"
+        TF_DETECT_CHANGES="true"
+    ;;
+    *)
+        TF_DETECT_CHANGES="false"
+    ;;
+
+esac
+
+log_key_value_pair "TF_DETECT_CHANGES" $TF_DETECT_CHANGES
+echo "::set-output name=tf_detect_changes::$TF_DETECT_CHANGES"

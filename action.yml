@@ -26,11 +26,24 @@ inputs:
     description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
     required: false
     default: 'false'
+outputs:
+  changes-detected:
+    description: 'resources to added'
+    value: ${{ steps.tf_plan.outputs.tf_detect_changes }}
+  resources-to-add:
+    description: 'resources to added'
+    value: ${{ steps.add_iac_changes_to_summary.outputs.resources_to_add }}
+  resources-to-change:
+    description: 'resources to change'
+    value: ${{ steps.add_iac_changes_to_summary.outputs.resources_to_change }}
+  resources-to-delete:
+    description: 'resources to delete'
+    value: ${{ steps.add_iac_changes_to_summary.outputs.resources_to_delete }}
 runs:
   using: "composite"
   steps:
     - run: |
-        ${{ github.action_path }}/../tfm-plan.sh \
+        ${{ github.action_path }}/tfm-plan.sh \
           -r "${{ inputs.region }}" \
           -a "${{ inputs.access-key }}" \
           -s "${{ inputs.secret-key }}" \
@@ -39,4 +52,17 @@ runs:
           -v "${{ inputs.terraform-var-file }}" \
           -p "${{ inputs.terraform-plan-file }}" \
           -d "${{ inputs.destroy-mode }}"
+      id: tf_plan
+      shell: bash
+    - run: |
+        ${{ github.action_path }}/tf-show.sh \
+          -r ${{ inputs.region }} \
+          -a ${{ inputs.access-key }} \
+          -s ${{ inputs.secret-key }} \
+          -t ${{ inputs.terraform-folder }} \
+          -b ${{ inputs.backend-configuration }} \
+          -p ${{ inputs.terraform-plan-file }} >> tf_plan.txt
+        ${{ github.action_path }}/add-iac-change-to-job-summary.sh tf_plan.txt
+      id: add_iac_changes_to_summary
+      if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
       shell: bash
