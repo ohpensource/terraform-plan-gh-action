@@ -1,3 +1,9 @@
+# :confetti_ball: 0.1.1.0 (2022-05-26T15:53:08.180Z)
+- - -
+## :bug: Fixes
+* LANZ-2662 fixed error detecting failed tf plan (#3)
+- - -
+- - -
 # :confetti_ball: 0.1.0.0 (2022-05-26T13:22:36.757Z)
 - - -
 ## :hammer: Features
