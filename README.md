@@ -49,7 +49,7 @@ jobs:
         with:
           name: deployment-team-branch-conf
           path: deployment-team-branch-conf
-      - uses: ohpensource/terraform-plan-gh-action/action@0.0.0.1
+      - uses: ohpensource/terraform-plan-gh-action@0.1.0.0
         name: terraform plan
         with:
           region: $REGION
@@ -84,7 +84,7 @@ jobs:
         with:
           name: deployment-team-branch-conf
           path: deployment-team-branch-conf
-      - uses: ohpensource/terraform-plan-gh-action/action@0.0.0.1
+      - uses: ohpensource/terraform-plan-gh-action@0.1.0.0
         name: terraform plan
         with:
           region: $REGION
@@ -96,3 +96,16 @@ jobs:
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
           destroy-mode: "true"
 ```
+
+## Integration with GitHub Job Summary!
+
+In case the terraform plans schedule any resource change as create, update, delete, the terraform message will be added as a Job Summary. Next is an example:
+
+![Job Summary Example](./docs/job-summary.png)
+
+## Outputs
+
+* **changes-detected**: true if terraform plan any creation, modification or deletion
+* **resources-to-add**: number of resources to be created
+* **resources-to-change**: number of resources to be modified
+* **resources-to-delete**: number of resources to be deleted
