@@ -5,6 +5,14 @@ log_action() {
     echo "${1^^} ..."
 }
 
+log_error() {
+    local RED='\033[0;31m'
+    local NC='\033[0m' # No Color
+    echo -e "\n${RED}${1^^} ${NC}..."
+}
+export -f log_error
+
+
 log_key_value_pair() {
     echo "    $1: $2"
 }
@@ -70,8 +78,12 @@ case "$tf_plan_exit_code" in
         log_action "changes detected to be added to the job summary"
         TF_DETECT_CHANGES="true"
     ;;
-    *)
+    0)
         TF_DETECT_CHANGES="false"
+    ;;
+    *)
+        log_error "error found performing tf plan"
+        exit 1
     ;;
 
 esac
