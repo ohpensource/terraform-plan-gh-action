@@ -61,7 +61,7 @@ jobs:
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
 ```
 
-#### plan to destroy resources?
+#### plan to destroy resources? BE CAREFULLL
 
 you can provide the parameter `destroy-mode: "true"`. Full example: 
 
