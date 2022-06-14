@@ -1,17 +1,67 @@
 name: continuous-delivery
+
 on:
   push:
     branches: [main]
+
 jobs:
+  detect-changes-in-js-files:
+    name: Detect changes in tf-show-parser folder
+    runs-on: ubuntu-latest
+    outputs:
+      any_change: ${{ steps.detect-changes.outputs.any_change }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Detect changes in tf-show-parser
+        id: detect-changes
+        run: |
+          if [ "$(git diff --name-only --ignore-space-at-eol HEAD HEAD~1 ./tf-show-parser | wc -l)" -gt "0" ]; then
+            echo "::set-output name=any_change::true"
+          fi
+
+  pack-js-and-dependencies:
+    name: Packing JS and dependencies into one file
+    needs: detect-changes-in-js-files
+    if: needs.detect-changes-in-js-files.outputs.any_change == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tf-show-parser
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CICD_GITHUB_REPOSITORY_TOKEN }}
+      - name: npm install
+        run: npm install
+      - name: Rebuild the dist/ directory
+        run: npm run prepare
+      - name: Push compiled code
+        working-directory: ./
+        run: |
+          if [ "$(git status -s | wc -l)" -gt "0" ]; then # ensure we have changes to commit
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add dist/**
+            git commit -m "[skip ci] compile js code for node into one file"
+            git push
+          fi
+
   semver-changelog:
+    needs: pack-js-and-dependencies
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
           token: ${{ secrets.CICD_GITHUB_REPOSITORY_TOKEN }}
-      - uses: ohpensource/platform-cicd/actions/git/generate-version-and-release-notes@2.0.1.0
+          ref: main
+      - uses: ohpensource/generate-version-and-release-notes-gh-action@v1.0.1
         name: semver & changelog
+        id: semver
         with:
           user-email: "github-svc@ohpen.com"
           user-name: "GitHub Actions"
