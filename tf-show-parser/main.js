@@ -58,10 +58,15 @@ function extractResourcesToBeDeleted(lines) {
     const REGEX_DETECT_REPLACE = /[\s]?# (?<resource>.*)[\s]+must be replaced/
 
     let result = []
-    lines.forEach(line => {
+    lines.forEach((line, i) => {
         const matchDestroy = line.match(REGEX_DETECT_DESTROY);
         const matchReplace = line.match(REGEX_DETECT_REPLACE);
         if (matchDestroy || matchReplace) {
+            console.log(`line ${i}:${line}`)
+            console.log('matchDestroy')
+            console.log(JSON.stringify(matchDestroy))
+            console.log('matchReplace')
+            console.log(JSON.stringify(matchReplace))
             const resource = matchDestroy.groups?.resource ?? matchReplace.groups?.resource
             if (resource) {
                 result.push(resource)
