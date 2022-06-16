@@ -54,15 +54,18 @@ runs:
           -d "${{ inputs.destroy-mode }}"
       id: tf_plan
       shell: bash
-    - run: |
+    - id: add_iac_changes_to_summary
+      if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
+      shell: bash
+      env:
+        TEMP_FILE: tf_plan.txt
+      run: |
         ${{ github.action_path }}/tf-show.sh \
           -r ${{ inputs.region }} \
           -a ${{ inputs.access-key }} \
           -s ${{ inputs.secret-key }} \
           -t ${{ inputs.terraform-folder }} \
           -b ${{ inputs.backend-configuration }} \
-          -p ${{ inputs.terraform-plan-file }} >> tf_plan.txt
-        ${{ github.action_path }}/add-iac-change-to-job-summary.sh tf_plan.txt
-      id: add_iac_changes_to_summary
-      if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
-      shell: bash
+          -p ${{ inputs.terraform-plan-file }} >> $TEMP_FILE
+        node ${{ github.action_path }}/dist/index.js $TEMP_FILE
+      
