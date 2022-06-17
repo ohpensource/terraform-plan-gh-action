@@ -69,3 +69,14 @@ runs:
           -p ${{ inputs.terraform-plan-file }} >> $TEMP_FILE
         node ${{ github.action_path }}/dist/index.js $TEMP_FILE
       
+    - id: print_cost
+      shell: bash
+      run: |
+        ${{ github.action_path }}/print-cost-increase.sh \
+          -r ${{ inputs.region }} \
+          -a ${{ inputs.access-key }} \
+          -s ${{ inputs.secret-key }} \
+          -t ${{ inputs.terraform-folder }} \
+          -b ${{ inputs.backend-configuration }} \
+          -p ${{ inputs.terraform-plan-file }} 
+      
