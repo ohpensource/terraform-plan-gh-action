@@ -14,6 +14,8 @@ Go crazy on the pull requests :) ! The only requirements are:
 > - Include _jira-tickets_ in your commits.
 > - Create/Update the documentation of the use case you are creating, improving or fixing. **[Boy scout](https://biratkirat.medium.com/step-8-the-boy-scout-rule-robert-c-martin-uncle-bob-9ac839778385) rules apply**. That means, for example, if you fix an already existing workflow, please include the necessary documentation to help everybody. The rule of thumb is: _leave the place (just a little bit)better than when you came_.
 
+In case you want to modify the JS in `./tf-show-parser`, execute `npm run install` inside that folder and `npm run prepare` to compile the code.
+
 ### github-action
 
 This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/plan) on the IAC that is specified. The (required) inputs are:

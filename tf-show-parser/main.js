@@ -59,15 +59,19 @@ function extractResourcesToBeDeleted(lines) {
 
     let result = []
     lines.forEach(line => {
-        const matchDestroy = line.match(REGEX_DETECT_DESTROY);
-        const matchReplace = line.match(REGEX_DETECT_REPLACE);
-        if (matchDestroy || matchReplace) {
-            const resource = matchDestroy.groups?.resource ?? matchReplace.groups?.resource
-            if (resource) {
-                result.push(resource)
-            }
-        }
+        extractResourceUsingRegex(line, REGEX_DETECT_DESTROY, result);
+        extractResourceUsingRegex(line, REGEX_DETECT_REPLACE, result);
     });
 
     return result
 }
+function extractResourceUsingRegex(line, regex, result) {
+    const match = line.match(regex);
+    if (match) {
+        const resource = match.groups.resource;
+        if (resource) {
+            result.push(resource);
+        }
+    }
+}
+
