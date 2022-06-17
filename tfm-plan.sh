@@ -71,8 +71,6 @@ cd $folder
     set -e  # enable stop running if exit code different from 0
 cd "$working_folder"
 
-log_key_value_pair "tf_plan_exit_code" $tf_plan_exit_code
-
 case "$tf_plan_exit_code" in
     2)
         log_action "changes detected to be added to the job summary"
