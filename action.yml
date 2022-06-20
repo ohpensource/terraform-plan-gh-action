@@ -26,6 +26,9 @@ inputs:
     description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
     required: false
     default: 'false'
+  settings-file:
+    description: "JSON file containing advanced settings."
+    required: false
 outputs:
   changes-detected:
     description: 'resources to added'
@@ -54,11 +57,11 @@ runs:
           -d "${{ inputs.destroy-mode }}"
       id: tf_plan
       shell: bash
-    - id: add_iac_changes_to_summary
+    - id: print_tf_output_to_file
       if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
       shell: bash
       env:
-        TEMP_FILE: tf_plan.txt
+        FILE_CONTAINING_TF_SHOW_OUTPUT: tf_plan.txt
       run: |
         ${{ github.action_path }}/tf-show.sh \
           -r ${{ inputs.region }} \
@@ -66,6 +69,13 @@ runs:
           -s ${{ inputs.secret-key }} \
           -t ${{ inputs.terraform-folder }} \
           -b ${{ inputs.backend-configuration }} \
-          -p ${{ inputs.terraform-plan-file }} >> $TEMP_FILE
-        node ${{ github.action_path }}/dist/index.js $TEMP_FILE
+          -p ${{ inputs.terraform-plan-file }} >> $FILE_CONTAINING_TF_SHOW_OUTPUT
+    - id: add_iac_changes_to_summary
+      if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
+      shell: bash
+      env:
+        FILE_CONTAINING_TF_SHOW_OUTPUT: tf_plan.txt
+        SETTINGS_FILE: ${{ inputs.settings-file }}
+      run: |
+        node ${{ github.action_path }}/dist/index.js
       

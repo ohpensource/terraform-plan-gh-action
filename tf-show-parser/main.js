@@ -1,7 +1,13 @@
+// WHEN THIS FILE IS MERGE TO MAIN IT IS COMPILED WITH ALL ITS DEPENDENCIES into the `dist` directory
+// In case you want to modify it and test it, execute npm run prepare to compile it locally and then push the changes in the `dist` directory
+
 const fs = require('fs');
 const core = require('@actions/core');
+const parser = require('./modules/parser.js')
+const logger = require('./modules/logger.js')
 
-const file = process.env.TEMP_FILE
+const file = process.env.FILE_CONTAINING_TF_SHOW_OUTPUT
+const settingsPath = process.env.SETTINGS_FILE
 
 if (!fs.existsSync(file)) {
     throw new Error(`file provided does not exist`)
@@ -10,12 +16,12 @@ if (!fs.existsSync(file)) {
 const tf_show_output = fs.readFileSync(file)
 const lines = tf_show_output.toString().split(`\n`).filter(x => x.length > 0)
 
-let { num_resources_to_add, num_resources_to_change, num_resources_to_delete, summary } = extractSummary(lines)
-let resources_to_be_deleted = extractResourcesToBeDeleted(lines)
+let { numResourcesToAdd, numResourcesToChange, numResourcesToDelete, summary } = parser.extractSummary(lines)
+let resources_to_be_deleted = parser.extractResourcesToBeDeleted(lines)
 
-core.setOutput('resources_to_add', num_resources_to_add);
-core.setOutput('resources_to_change', num_resources_to_change);
-core.setOutput('resources_to_delete', num_resources_to_delete);
+core.setOutput('resources_to_add', numResourcesToAdd);
+core.setOutput('resources_to_change', numResourcesToChange);
+core.setOutput('resources_to_delete', numResourcesToDelete);
 
 let markdownSummary = summary;
 if (resources_to_be_deleted.length > 0) {
@@ -27,51 +33,27 @@ core.summary
     .addRaw(markdownSummary)
     .write()
 
-function extractSummary(lines) {
+if (fs.existsSync(settingsPath)) {
+    const settings = JSON.parse(fs.readFileSync(settingsPath))
+    logger.logKeyValuePair(`settings`, settings)
+    if (settings.protectedResources) {
+        logger.logAction(`checking protected resources are not been deleted`)
 
-    const REGEX_TF_SUMMARY = /Plan: (?<resources_to_add>[\d]+) to add, (?<resources_to_change>[\d]+) to change, (?<resources_to_delete>[\d]+) to destroy./
-
-    let result
-    const validOutput = lines.reverse().find(line => {
-        const matchRegex = line.match(REGEX_TF_SUMMARY);
-        if (matchRegex) {
-            result = {
-                num_resources_to_add: matchRegex.groups?.resources_to_add,
-                num_resources_to_change: matchRegex.groups?.resources_to_change,
-                num_resources_to_delete: matchRegex.groups?.resources_to_delete,
-                summary: line
+        const protectedResourcesToBeDeleted = []
+        settings.protectedResources.forEach(x => {
+            if (resources_to_be_deleted.some(y => y.includes(x))) {
+                protectedResourcesToBeDeleted.push({
+                    protectedKey: x,
+                    resourcesMatching: resources_to_be_deleted.filter(y => y.includes(x))
+                })
             }
-        }
-        return matchRegex;
-    });
+        })
 
-    if (!validOutput) {
-        throw new Error(`terraform plan provided is not valid`);
-    }
-
-    return result
-}
-
-function extractResourcesToBeDeleted(lines) {
-
-    const REGEX_DETECT_DESTROY = /[\s]?# (?<resource>.*)[\s]+will be destroyed/
-    const REGEX_DETECT_REPLACE = /[\s]?# (?<resource>.*)[\s]+must be replaced/
-
-    let result = []
-    lines.forEach(line => {
-        extractResourceUsingRegex(line, REGEX_DETECT_DESTROY, result);
-        extractResourceUsingRegex(line, REGEX_DETECT_REPLACE, result);
-    });
-
-    return result
-}
-function extractResourceUsingRegex(line, regex, result) {
-    const match = line.match(regex);
-    if (match) {
-        const resource = match.groups.resource;
-        if (resource) {
-            result.push(resource);
+        if (protectedResourcesToBeDeleted.length > 0) {
+            logger.logError("protected resources schedule to be deleted:")
+            core.error("tf-plan: some protected resources are schedule to be deleted")
+            protectedResourcesToBeDeleted.forEach(x => logger.logKeyValuePair(`resource`, x))
+            process.exit(1)
         }
     }
 }
-

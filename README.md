@@ -111,3 +111,54 @@ In case the terraform plans schedule any resource change as create, update, dele
 * **resources-to-add**: number of resources to be created
 * **resources-to-change**: number of resources to be modified
 * **resources-to-delete**: number of resources to be deleted
+
+## Avoid resources to be deleted!
+
+Let's say you want to avoid anyone deleting specific resources as dynamoDB. You can make this GH action validate what resources are going to be deleted or replaced, for that you have to provide a JSON file in the `settings-file` property. Inside this one list the resources to protect as next:
+
+```yml
+name: CI
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  plan-team-branch-deployment:
+    needs: [configure-team-branch-environment, download-artifacts]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: deployment-folder
+          path: deployment-folder
+      - uses: actions/download-artifact@v2
+        with:
+          name: deployment-team-branch-conf
+          path: deployment-team-branch-conf
+      - uses: ohpensource/terraform-plan-gh-action@0.1.0.0
+        name: terraform plan
+        with:
+          region: $REGION
+          access-key: $COR_AWS_ACCESS_KEY_ID
+          secret-key: $COR_AWS_SECRET_ACCESS_KEY
+          terraform-folder: "deployment-folder/terraform"
+          backend-configuration: "deployment-team-branch-conf/backend.tf"
+          terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
+          terraform-plan-file: "deployment-team-branch-plan/tfplan"
+          settings-file: ./cicd/tfplan-settings.json  # PLEASE NOTE THIS IS THE KEY PARAMETER
+```
+
+Then `cicd/tfplan-settings.json` should look like this:
+
+```json
+{
+    "protectedResources":[
+        "aws_iam_role_policy_attachment"
+    ]
+}
+```` 
+
+Next are some examples:
+* `"aws_iam_role_policy_attachment.lambda_policy"` full resource name
+* `"aws_iam_role_policy_attachment"` any aws_iam_role_policy_attachment
+* `"dynamo"` any resource that contains dynamo in its name
