@@ -26,6 +26,15 @@ inputs:
     description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
     required: false
     default: 'false'
+  infracost-api-key:
+    description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
+    required: false
+  gh-token:
+    description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
+    required: false
+  pr-number:
+    description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
+    required: false
 outputs:
   changes-detected:
     description: 'resources to added'
@@ -71,6 +80,10 @@ runs:
       
     - id: print_cost
       shell: bash
+      env:
+        INFRACOST_API_KEY: ${{ inputs.infracost-api-key }}
+        GH_TOKEN: ${{ inputs.gh-token }}
+        PR_NUMBER: ${{ inputs.pr-number }}
       run: |
         ${{ github.action_path }}/print-cost-increase.sh \
           -r ${{ inputs.region }} \

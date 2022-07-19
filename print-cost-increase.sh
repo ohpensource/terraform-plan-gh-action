@@ -42,7 +42,7 @@ tfm_plan="$working_folder/$tfm_plan"
 folder="$working_folder/$tfm_folder"
 cd $folder
 
-tf_show_output="output.json"
+tf_show_output="tf_output.json"
 terraform init -backend-config="$backend_config_file"
 terraform show -json $tfm_plan > $tf_show_output
 
@@ -50,6 +50,15 @@ echo "######## costs ########"
 # Downloads the CLI based on your OS/arch and puts it in /usr/local/bin
 curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
 infracost --version # Should show 0.10.7
+echo "# Cost Increase:" >> $GITHUB_STEP_SUMMARY
+infracost diff  --path "$tf_show_output" >> $GITHUB_STEP_SUMMARY
+
+echo "##### addding comment to PR $PR_NUMBER"
+infracost_output="infra_output.json"
 infracost diff  --path "$tf_show_output"
+infracost diff  --path "$tf_show_output" --out-file "$infracost_output"
+
+echo "##### GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+infracost comment github --path "$infracost_output" --repo $GITHUB_REPOSITORY --github-token $GH_TOKEN --pull-request $PR_NUMBER --behavior=update
 
 cd "$working_folder"
