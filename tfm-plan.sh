@@ -24,9 +24,19 @@ set_up_aws_user_credentials() {
     export AWS_SECRET_ACCESS_KEY=$3
 }
 
+terraform_init() {
+    session_name_key="<IAM_ROLE_SESSION_NAME>"
+    backend_config_file=$1
+    session_name_value=$2
+
+    sed -i "s/$session_name_key/$session_name_value/" $backend_config_file
+    terraform init -backend-config="$backend_config_file"
+    sed -i "s/$session_name_value/$session_name_key/" $backend_config_file
+}
+
 log_action "planning terraform"
 
-while getopts r:a:s:t:b:v:p:d: flag
+while getopts r:a:s:t:b:v:p:d:n: flag
 do
     case "${flag}" in
        r) region=${OPTARG};;
@@ -36,7 +46,8 @@ do
        b) backend_config_file=${OPTARG};;
        v) tfvars_file=${OPTARG};;
        p) tfplan_output=${OPTARG};;
-       d) destroy_mode=${OPTARG};; 
+       d) destroy_mode=${OPTARG};;
+       n) session_name_value=${OPTARG};;
     esac
 done
 if [[ "${destroy_mode}" == '' ]]; then
@@ -60,7 +71,7 @@ mkdir -p $(dirname $tfplan_output)
 
 folder="$working_folder/$tfm_folder"
 cd $folder
-    terraform init -backend-config="$backend_config_file"
+    terraform_init $backend_config_file $session_name_value
     set +e  # disable stop running if exit code different from 0
     if [ "$destroy_mode" = "true" ]; then 
         terraform plan -destroy -var-file="$tfvars_file" -out="$tfplan_output" -detailed-exitcode

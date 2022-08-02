@@ -5,6 +5,9 @@ Repository containing Ohpen's Github Action to plan Terraform configuration with
 - [TERRAFORM-PLAN-GH-ACTION](#TERRAFORM-PLAN-GH-ACTION)
   - [code-of-conduct](#code-of-conduct)
   - [github-action](#github-action)
+    - [create-a-destroy-plan](#create-a-destroy-plan)
+    - [integration-with-gitHub-job-summary](#integration-with-gitHub-job-summary)
+    - [outputs](#outputs)
 
 ## code-of-conduct
 
@@ -16,7 +19,7 @@ Go crazy on the pull requests :) ! The only requirements are:
 
 In case you want to modify the JS in `./tf-show-parser`, execute `npm run install` inside that folder and `npm run prepare` to compile the code.
 
-### github-action
+## github-action
 
 This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/plan) on the IAC that is specified. The (required) inputs are:
 
@@ -63,9 +66,9 @@ jobs:
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
 ```
 
-#### plan to destroy resources?
+### create-a-destroy-plan
 
-you can provide the parameter `destroy-mode: "true"`. Full example: 
+you can provide the parameter `destroy-mode: "true"`. Full example:
 
 ```yaml
 name: CI
@@ -99,15 +102,15 @@ jobs:
           destroy-mode: "true"
 ```
 
-## Integration with GitHub Job Summary!
+### Integration with GitHub Job Summary
 
 In case the terraform plans schedule any resource change as create, update, delete, the terraform message and the resources to be deleted will be added as a Job Summary. Next is an example:
 
 ![Job Summary Example](./docs/job-summary.png)
 
-## Outputs
+### Outputs
 
-* **changes-detected**: true if terraform plan any creation, modification or deletion
-* **resources-to-add**: number of resources to be created
-* **resources-to-change**: number of resources to be modified
-* **resources-to-delete**: number of resources to be deleted
+- **changes-detected**: true if terraform plan any creation, modification or deletion
+- **resources-to-add**: number of resources to be created
+- **resources-to-change**: number of resources to be modified
+- **resources-to-delete**: number of resources to be deleted

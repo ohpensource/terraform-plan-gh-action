@@ -26,6 +26,10 @@ inputs:
     description: "Plans a destroy action. false(default value)=>normal flow, true=>destroy mode."
     required: false
     default: 'false'
+  session-name:
+    description: "IAM session name that will tag your sts-assume-role operation."
+    required: false
+    default: 'undefined'
 outputs:
   changes-detected:
     description: 'resources to added'
@@ -51,7 +55,8 @@ runs:
           -b "${{ inputs.backend-configuration }}" \
           -v "${{ inputs.terraform-var-file }}" \
           -p "${{ inputs.terraform-plan-file }}" \
-          -d "${{ inputs.destroy-mode }}"
+          -d "${{ inputs.destroy-mode }}" \
+          -n "${{ inputs.session-name }}"
       id: tf_plan
       shell: bash
     - id: add_iac_changes_to_summary
@@ -66,6 +71,7 @@ runs:
           -s ${{ inputs.secret-key }} \
           -t ${{ inputs.terraform-folder }} \
           -b ${{ inputs.backend-configuration }} \
-          -p ${{ inputs.terraform-plan-file }} >> $TEMP_FILE
+          -p ${{ inputs.terraform-plan-file }} \
+          -n "${{ inputs.session-name }}" >> $TEMP_FILE
         node ${{ github.action_path }}/dist/index.js $TEMP_FILE
       
