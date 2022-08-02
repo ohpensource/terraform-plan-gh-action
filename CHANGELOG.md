@@ -1,3 +1,9 @@
+# :confetti_ball: 0.2.0.0 (2022-08-02T13:14:59.524Z)
+- - -
+## :hammer: Features
+* feat: [LANZ-2904](https://ohpen.atlassian.net/browse/LANZ-2904) include optional session-name parameter (#8)
+- - -
+- - -
 # :confetti_ball: 0.1.1.2 (2022-06-17T11:33:57.502Z)
 - - -
 ## :newspaper: Others
