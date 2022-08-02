@@ -16,9 +16,19 @@ set_up_aws_user_credentials() {
     export AWS_SECRET_ACCESS_KEY=$3
 }
 
+terraform_init() {
+    session_name_key="<IAM_ROLE_SESSION_NAME>"
+    backend_config_file=$1
+    session_name_value=$2
+
+    sed -i "s/$session_name_key/$session_name_value/" $backend_config_file
+    terraform init -backend-config="$backend_config_file"
+    sed -i "s/$session_name_value/$session_name_key/" $backend_config_file
+}
+
 log_action "planning terraform"
 
-while getopts r:a:s:t:b:p: flag
+while getopts r:a:s:t:b:p:n: flag
 do
     case "${flag}" in
        r) region=${OPTARG};;
@@ -27,6 +37,7 @@ do
        t) tfm_folder=${OPTARG};;
        b) backend_config_file=${OPTARG};;
        p) tfm_plan=${OPTARG};;
+       n) session_name_value=${OPTARG};;
     esac
 done
 
@@ -42,7 +53,7 @@ tfm_plan="$working_folder/$tfm_plan"
 folder="$working_folder/$tfm_folder"
 cd $folder
 
-terraform init -backend-config="$backend_config_file"
+terraform_init $backend_config_file $session_name_value
 terraform show -no-color "$tfm_plan"
 
 cd "$working_folder"
