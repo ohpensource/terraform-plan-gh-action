@@ -1,3 +1,9 @@
+# :confetti_ball: 0.2.0.1 (2022-08-03T14:39:31.367Z)
+- - -
+## :newspaper: Others
+* docs: [LANZ-3024](https://ohpen.atlassian.net/browse/LANZ-3024) improve readme (#9)
+- - -
+- - -
 # :confetti_ball: 0.2.0.0 (2022-08-02T13:14:59.524Z)
 - - -
 ## :hammer: Features
