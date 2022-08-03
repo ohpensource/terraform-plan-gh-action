@@ -17,13 +17,14 @@ set_up_aws_user_credentials() {
 }
 
 terraform_init() {
-    session_name_key="<IAM_ROLE_SESSION_NAME>"
     backend_config_file=$1
     session_name_value=$2
 
-    sed -i "s/$session_name_key/$session_name_value/" $backend_config_file
-    terraform init -backend-config="$backend_config_file"
-    sed -i "s/$session_name_value/$session_name_key/" $backend_config_file
+    if [[ "${session_name_value}" == 'undefined' ]]; then
+        terraform init -backend-config="$backend_config_file"
+    else
+        terraform init -backend-config="$backend_config_file" -backend-config="session_name=$session_name_value"
+    fi
 }
 
 log_action "planning terraform"

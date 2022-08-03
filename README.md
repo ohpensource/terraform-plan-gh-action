@@ -21,7 +21,7 @@ In case you want to modify the JS in `./tf-show-parser`, execute `npm run instal
 
 ## github-action
 
-This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/plan) on the IAC that is specified. The (required) inputs are:
+This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/plan) on the IAC that is specified. The inputs are:
 
 - _region_: aws region name.
 - _access-key_: user access key to be used.
@@ -30,6 +30,7 @@ This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/
 - _backend-configuration_: path of the tfvars file with backend configuration.
 - _terraform-var-file_: tfvars file to use as variables input.
 - _terraform-state-file_: File where terraform will write down the plan.
+- _session-name_: (OPTIONAL) If provided, terraform will use it as session tag when managing the terraform backend (if an IAM role is used to do so).
 
 ⚠️ Attention! Terraform will try to assume the deployment role in the destination AWS account. Such deployment will fail if the user is not allowed to assume such role.
 
@@ -54,7 +55,7 @@ jobs:
         with:
           name: deployment-team-branch-conf
           path: deployment-team-branch-conf
-      - uses: ohpensource/terraform-plan-gh-action@0.1.0.0
+      - uses: ohpensource/terraform-plan-gh-action@0.2.0.0
         name: terraform plan
         with:
           region: $REGION
@@ -64,6 +65,7 @@ jobs:
           backend-configuration: "deployment-team-branch-conf/backend.tf"
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
+          session-name: "my-session-name"
 ```
 
 ### create-a-destroy-plan
