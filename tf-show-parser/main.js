@@ -27,6 +27,10 @@ core.summary
     .addRaw(markdownSummary)
     .write()
 
+// file_path = './tfPlanSummary.json'
+// createSummaryJSONFile(file_path, num_resources_to_add, num_resources_to_change, num_resources_to_delete)
+// uploadSummaryAsArtifact(file_path);
+
 function extractSummary(lines) {
 
     const REGEX_TF_SUMMARY = /Plan: (?<resources_to_add>[\d]+) to add, (?<resources_to_change>[\d]+) to change, (?<resources_to_delete>[\d]+) to destroy./
@@ -75,3 +79,24 @@ function extractResourceUsingRegex(line, regex, result) {
     }
 }
 
+// function createSummaryJSONFile(file_path, num_resources_to_add, num_resources_to_change, num_resources_to_delete) {
+//     const tfPlanSummary = {
+//         numResourcesToAdd: num_resources_to_add,
+//         numResourcesToChange: num_resources_to_change,
+//         numResourcesToDelete: num_resources_to_delete
+//     };
+//     const jsonContent = JSON.stringify(tfPlanSummary)
+//     fs.writeFileSync(file_path, jsonContent);
+// }
+
+// function uploadSummaryAsArtifact(file_path) {
+//     const artifactName = 'tf-plan-summary';
+//     const files = [file_path];
+//     const rootDirectory = '.';
+//     const options = {
+//         continueOnError: false
+//     };
+
+//     const uploadResponse = artifact_client.uploadArtifact(artifactName, files, rootDirectory, options);
+//     console.log(uploadResponse);
+// }
