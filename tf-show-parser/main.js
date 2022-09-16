@@ -1,6 +1,7 @@
 const fs = require('fs');
 const core = require('@actions/core');
 
+const skip_summary_if_no_changes = (process.env.SKIP_SUMMARY_IF_NO_CHANGES === 'true')
 const file = process.env.TEMP_FILE
 
 if (!fs.existsSync(file)) {
@@ -17,15 +18,19 @@ core.setOutput('resources_to_add', num_resources_to_add);
 core.setOutput('resources_to_change', num_resources_to_change);
 core.setOutput('resources_to_delete', num_resources_to_delete);
 
-let markdownSummary = summary;
-if (resources_to_be_deleted.length > 0) {
-    markdownSummary += `\nResources to be deleted:\n`
-    resources_to_be_deleted.forEach(x => markdownSummary += `* ${x}\n`)
-}
+infra_changed = num_resources_to_add > 0 || num_resources_to_change > 0 || num_resources_to_delete > 0
+show_summary = infra_changed || !skip_summary_if_no_changes
+if (show_summary) {
+    let markdownSummary = summary;
+    if (resources_to_be_deleted.length > 0) {
+        markdownSummary += `\nResources to be deleted:\n`
+        resources_to_be_deleted.forEach(x => markdownSummary += `* ${x}\n`)
+    }
 
-core.summary
-    .addRaw(markdownSummary)
-    .write()
+    core.summary
+        .addRaw(markdownSummary)
+        .write()
+}
 
 function extractSummary(lines) {
 

@@ -30,6 +30,10 @@ inputs:
     description: "IAM session name that will tag your sts-assume-role operation."
     required: false
     default: 'undefined'
+  skip-summary-if-no-changes:
+    description: "flag to avoid adding a job summary if there are no changes in the infrastructure."
+    required: false
+    default: 'false'
 outputs:
   changes-detected:
     description: 'resources to added'
@@ -64,6 +68,7 @@ runs:
       shell: bash
       env:
         TEMP_FILE: tf_plan.txt
+        SKIP_SUMMARY_IF_NO_CHANGES: ${{ inputs.skip-summary-if-no-changes }}
       run: |
         ${{ github.action_path }}/tf-show.sh \
           -r ${{ inputs.region }} \
