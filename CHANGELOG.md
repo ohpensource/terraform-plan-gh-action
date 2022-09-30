@@ -1,3 +1,10 @@
+# :confetti_ball: 0.2.0.3 (2022-09-30T12:55:31.685Z)
+- - -
+## :newspaper: Others
+* ci: [LANZ-3220](https://ohpen.atlassian.net/browse/LANZ-3220) git ignore for idea files
+* docs: [LANZ-3220](https://ohpen.atlassian.net/browse/LANZ-3220) small documentation update
+- - -
+- - -
 # :confetti_ball: 0.2.0.2 (2022-09-16T09:31:52.468Z)
 - - -
 ## :newspaper: Others
