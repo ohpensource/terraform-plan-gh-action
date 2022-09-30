@@ -71,12 +71,12 @@ runs:
         SKIP_SUMMARY_IF_NO_CHANGES: ${{ inputs.skip-summary-if-no-changes }}
       run: |
         ${{ github.action_path }}/tf-show.sh \
-          -r ${{ inputs.region }} \
-          -a ${{ inputs.access-key }} \
-          -s ${{ inputs.secret-key }} \
-          -t ${{ inputs.terraform-folder }} \
-          -b ${{ inputs.backend-configuration }} \
-          -p ${{ inputs.terraform-plan-file }} \
+          -r "${{ inputs.region }}" \
+          -a "${{ inputs.access-key }}" \
+          -s "${{ inputs.secret-key }}" \
+          -t "${{ inputs.terraform-folder }}" \
+          -b "${{ inputs.backend-configuration }}" \
+          -p "${{ inputs.terraform-plan-file }}" \
           -n "${{ inputs.session-name }}" >> $TEMP_FILE
         node ${{ github.action_path }}/dist/index.js $TEMP_FILE
       

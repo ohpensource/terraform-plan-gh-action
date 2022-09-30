@@ -66,7 +66,7 @@ jobs:
           backend-configuration: "deployment-team-branch-conf/backend.tf"
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
-          skip-summary-if-no-changes: "false"
+          skip-summary-if-no-changes: false
           session-name: "my-session-name"
 ```
 
@@ -103,8 +103,8 @@ jobs:
           backend-configuration: "deployment-team-branch-conf/backend.tf"
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
-          skip-summary-if-no-changes: "false"
-          destroy-mode: "true"
+          skip-summary-if-no-changes: false
+          destroy-mode: true
 ```
 
 ### Integration with GitHub Job Summary
