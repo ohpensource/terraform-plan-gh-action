@@ -99,4 +99,4 @@ case "$tf_plan_exit_code" in
 esac
 
 log_key_value_pair "TF_DETECT_CHANGES" $TF_DETECT_CHANGES
-echo "::set-output name=tf_detect_changes::$TF_DETECT_CHANGES"
+echo "tf_detect_changes=$TF_DETECT_CHANGES" >> $GITHUB_OUTPUT
