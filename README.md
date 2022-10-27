@@ -17,8 +17,6 @@ Go crazy on the pull requests :) ! The only requirements are:
 > - Include _jira-tickets_ in your commits.
 > - Create/Update the documentation of the use case you are creating, improving or fixing. **[Boy scout](https://biratkirat.medium.com/step-8-the-boy-scout-rule-robert-c-martin-uncle-bob-9ac839778385) rules apply**. That means, for example, if you fix an already existing workflow, please include the necessary documentation to help everybody. The rule of thumb is: _leave the place (just a little bit)better than when you came_.
 
-In case you want to modify the JS in `./tf-show-parser`, execute `npm run install` inside that folder and `npm run prepare` to compile the code.
-
 ## github-action
 
 This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/plan) on the IAC that is specified. The inputs are:
@@ -109,9 +107,15 @@ jobs:
 
 ### Integration with GitHub Job Summary
 
-In case the terraform plans schedule any resource change as create, update, delete, the terraform message and the resources to be deleted will be added as a Job Summary. Next is an example:
+In case the terraform plans schedule any resource change as create, update, or delete, the terraform message and the resources to be deleted will be added as a Job Summary. Next is an example:
 
 ![Job Summary Example](./docs/job-summary.png)
+
+#### Terraform plan is parsed for the summary
+
+The terraform plan is parsed by `./tf-show-parser/main.js` to extract the summary data. It requires `@actions/core` library for setting the output. In case you want to modify it, move to `./tf-show-parser`, execute `npm install` inside that folder, edit the code and run `npm run prepare` for compiling the code.
+
+> The JS code and the required libraries (`@actions/core`) are compiled into `./.dist` folder
 
 ### Outputs
 
