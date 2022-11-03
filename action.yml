@@ -34,6 +34,10 @@ inputs:
     description: "flag to avoid adding a job summary if there are no changes in the infrastructure."
     required: false
     default: 'false'
+  skip-summary:
+    description: "flag to avoid adding a job summary."
+    required: false
+    default: 'false'
 outputs:
   changes-detected:
     description: 'resources to added'
@@ -69,6 +73,7 @@ runs:
       env:
         TEMP_FILE: tf_plan.txt
         SKIP_SUMMARY_IF_NO_CHANGES: ${{ inputs.skip-summary-if-no-changes }}
+        SKIP_SUMMARY: ${{ inputs.skip-summary }}
       run: |
         ${{ github.action_path }}/tf-show.sh \
           -r "${{ inputs.region }}" \
