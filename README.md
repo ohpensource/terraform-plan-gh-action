@@ -30,6 +30,7 @@ This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/
 - _terraform-state-file_: File where terraform will write down the plan.
 - _session-name_: (OPTIONAL) If provided, terraform will use it as session tag when managing the terraform backend (if an IAM role is used to do so).
 - _skip-summary-if-no-changes_: (OPTIONAL) If provided, terraform will not print a [GitHub Job Summary](#integration-with-github-job-summary) when TF plan output _Plan: 0 to add, 0 to change, 0 to destroy_.
+- - _skip-summary_: (OPTIONAL) If provided, terraform will not print a [GitHub Job Summary](#integration-with-github-job-summary).
 
 ⚠️ Attention! Terraform will try to assume the deployment role in the destination AWS account. Such deployment will fail if the user is not allowed to assume such role.
 
@@ -65,6 +66,7 @@ jobs:
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
           skip-summary-if-no-changes: false
+          skip-summary: false
           session-name: "my-session-name"
 ```
 
@@ -102,6 +104,7 @@ jobs:
           terraform-var-file: "deployment-team-branch-conf/terraform.tfvars"
           terraform-plan-file: "deployment-team-branch-plan/tfplan"
           skip-summary-if-no-changes: false
+          skip-summary: false
           destroy-mode: true
 ```
 
