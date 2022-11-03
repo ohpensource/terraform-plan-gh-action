@@ -1,3 +1,9 @@
+# :confetti_ball: 0.3.0.0 (2022-11-03T13:26:55.508Z)
+- - -
+## :hammer: Features
+* feat: [LANZ-3307](https://ohpen.atlassian.net/browse/LANZ-3307) add skip summary flag
+- - -
+- - -
 # :confetti_ball: 0.2.0.4 (2022-10-27T09:14:38.539Z)
 - - -
 ## :newspaper: Others
