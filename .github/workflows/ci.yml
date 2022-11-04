@@ -3,10 +3,19 @@ on:
   pull_request:
     branches: [main]
 jobs:
+  pack-js:
+    uses: ./.github/workflows/pack-js-and-dependencies.yml
+    needs:
+      [check-conventional-commits, check-jira-tickets-commits, documentation]
+    with:
+      branch_name: ${{ github.head_ref }}
+    secrets:
+      gh_token: ${{ secrets.CICD_GITHUB_REPOSITORY_TOKEN }}
+
   check-conventional-commits:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: ohpensource/platform-cicd/actions/git/ensure-conventional-commits@2.16.0.0
@@ -18,7 +27,7 @@ jobs:
   check-jira-tickets-commits:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: ohpensource/platform-cicd/actions/git/ensure-commits-message-jira-ticket@2.16.0.0
@@ -26,21 +35,21 @@ jobs:
         with:
           base-branch: $GITHUB_BASE_REF
           pr-branch: $GITHUB_HEAD_REF
-  
+
   documentation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v14.3
+        uses: tj-actions/changed-files@v34.1.1
         with:
           files: "README.md"
       - name: ensure-documentation-is-added
         if: steps.changed-files.outputs.any_modified == 'false'
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6.3.3
         with:
           script: |
-              core.setFailed('Include documentation in the README.md file!')
+            core.setFailed('Include documentation in the README.md file!')
