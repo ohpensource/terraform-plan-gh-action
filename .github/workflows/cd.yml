@@ -18,7 +18,7 @@ jobs:
         id: detect-changes
         run: |
           if [ "$(git diff --name-only --ignore-space-at-eol HEAD HEAD~1 ./tf-show-parser | wc -l)" -gt "0" ]; then
-            echo "::set-output name=any_change::true"
+            echo "any_change=true" >> $GITHUB_OUTPUT
           fi
 
   pack-js-and-dependencies:
