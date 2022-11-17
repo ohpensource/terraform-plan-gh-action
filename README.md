@@ -27,7 +27,7 @@ This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/
 - _terraform-folder_: folder where the terraform configuration is.
 - _backend-configuration_: path of the tfvars file with backend configuration.
 - _terraform-var-file_: tfvars file to use as variables input.
-- _terraform-state-file_: File where terraform will write down the plan.
+- _terraform-plan-file_: File where terraform will write down the plan.
 - _session-name_: (OPTIONAL) If provided, terraform will use it as session tag when managing the terraform backend (if an IAM role is used to do so).
 - _skip-summary-if-no-changes_: (OPTIONAL) If provided, terraform will not print a [GitHub Job Summary](#integration-with-github-job-summary) when TF plan output _Plan: 0 to add, 0 to change, 0 to destroy_.
 - - _skip-summary_: (OPTIONAL) If provided, terraform will not print a [GitHub Job Summary](#integration-with-github-job-summary).
