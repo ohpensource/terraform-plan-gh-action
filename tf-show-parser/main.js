@@ -36,9 +36,10 @@ if (show_summary) {
 function extractSummary(lines) {
 
     const REGEX_TF_SUMMARY = /Plan: (?<resources_to_add>[\d]+) to add, (?<resources_to_change>[\d]+) to change, (?<resources_to_delete>[\d]+) to destroy./
+    const REGEX_TF_OUTPUTS = /Changes to Outputs:/
 
     let result
-    const validOutput = lines.reverse().find(line => {
+    const resourcesChanged = lines.reverse().find(line => {
         const matchRegex = line.match(REGEX_TF_SUMMARY);
         if (matchRegex) {
             result = {
@@ -51,7 +52,24 @@ function extractSummary(lines) {
         return matchRegex;
     });
 
-    if (!validOutput) {
+    const outputsChanged = lines.reverse().find(line => {
+        const matchRegex = line.match(REGEX_TF_OUTPUTS);
+        if (matchRegex) {
+            if (result) {
+                result.summary += 'Outputs changed.'
+            } else {
+                result = {
+                    num_resources_to_add: 0,
+                    num_resources_to_change: 0,
+                    num_resources_to_delete: 0,
+                    summary: 'Output changes detected only.'
+                }
+            }
+        }
+        return matchRegex;
+    })
+
+    if (!resourcesChanged && !outputsChanged) {
         throw new Error(`terraform plan provided is not valid`);
     }
 
