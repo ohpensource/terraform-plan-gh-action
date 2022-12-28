@@ -110,7 +110,9 @@ jobs:
 
 ### Integration with GitHub Job Summary
 
-In case the terraform plans schedule any resource change as create, update, or delete, the terraform message and the resources to be deleted will be added as a Job Summary. Next is an example:
+In case the terraform plans schedule any resource change as create, update, or delete, the terraform message and the resources to be deleted will be added as a Job Summary.
+The summary also contains information about terraform output changes.
+Next is an example:
 
 ![Job Summary Example](./docs/job-summary.png)
 
