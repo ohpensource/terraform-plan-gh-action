@@ -38,6 +38,9 @@ inputs:
     description: "flag to avoid adding a job summary."
     required: false
     default: 'false'
+  replaced-resources:
+    description: "space separated list of the terraform resources to be replaced"
+    required: false
 outputs:
   changes-detected:
     description: 'resources to added'
@@ -64,7 +67,8 @@ runs:
           -v "${{ inputs.terraform-var-file }}" \
           -p "${{ inputs.terraform-plan-file }}" \
           -d "${{ inputs.destroy-mode }}" \
-          -n "${{ inputs.session-name }}"
+          -n "${{ inputs.session-name }}" \
+          -e "${{ inputs.replaced-resources }}"
       id: tf_plan
       shell: bash
     - id: add_iac_changes_to_summary
