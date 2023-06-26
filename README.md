@@ -24,6 +24,7 @@ This action performs a [_terraform plan_](https://www.terraform.io/cli/commands/
 - _region_: aws region name.
 - _access-key_: user access key to be used.
 - _secret-key_: user secret key to be used.
+- _aws-profile_: user aws-profile, can be used instead of _access-key_/_secret-key_ key.
 - _terraform-folder_: folder where the terraform configuration is.
 - _backend-configuration_: path of the tfvars file with backend configuration.
 - _terraform-var-file_: tfvars file to use as variables input.

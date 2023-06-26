@@ -19,9 +19,20 @@ log_key_value_pair() {
 
 set_up_aws_user_credentials() {
     unset AWS_SESSION_TOKEN
+
     export AWS_DEFAULT_REGION=$1
     export AWS_ACCESS_KEY_ID=$2
     export AWS_SECRET_ACCESS_KEY=$3
+}
+
+set_up_aws_user_credentials_profile() {
+    unset AWS_SESSION_TOKEN
+    unset AWS_ACCESS_KEY_ID
+    unset AWS_SECRET_ACCESS_KEY
+
+    export TF_LOG=DEBUG
+    export AWS_SDK_LOAD_CONFIG=1
+    export AWS_PROFILE=$1
 }
 
 terraform_init() {
@@ -37,7 +48,7 @@ terraform_init() {
 
 log_action "planning terraform"
 
-while getopts r:a:s:t:b:v:p:d:n: flag
+while getopts r:a:s:t:b:v:p:d:n:x: flag
 do
     case "${flag}" in
        r) region=${OPTARG};;
@@ -49,6 +60,7 @@ do
        p) tfplan_output=${OPTARG};;
        d) destroy_mode=${OPTARG};;
        n) session_name_value=${OPTARG};;
+       x) profile=${OPTARG};;
     esac
 done
 if [[ "${destroy_mode}" == '' ]]; then
@@ -63,7 +75,11 @@ log_key_value_pair "tfvars-file" "$tfvars_file"
 log_key_value_pair "tfplan-output" "$tfplan_output"
 log_key_value_pair "destroy-mode" "$destroy_mode"
 
-set_up_aws_user_credentials "$region" "$access_key" "$secret_key"
+if [[ -z "$profile" ]]; then
+  set_up_aws_user_credentials "$region" "$access_key" "$secret_key"
+else
+  set_up_aws_user_credentials_profile "$profile"
+fi
 
 backend_config_file="$working_folder/$backend_config_file"
 tfvars_file="$working_folder/$tfvars_file"

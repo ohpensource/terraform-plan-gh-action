@@ -6,10 +6,13 @@ inputs:
     required: true
   access-key:
     description: "access key"
-    required: true
+    required: false
   secret-key:
     description: "secret key"
-    required: true
+    required: false
+  aws-profile:
+    description: "aws profile"
+    required: false
   terraform-folder:
     description: "folder where your terraform configuration is"
     required: true
@@ -59,6 +62,7 @@ runs:
           -r "${{ inputs.region }}" \
           -a "${{ inputs.access-key }}" \
           -s "${{ inputs.secret-key }}" \
+          -x "${{ inputs.aws-profile }}" \
           -t "${{ inputs.terraform-folder }}" \
           -b "${{ inputs.backend-configuration }}" \
           -v "${{ inputs.terraform-var-file }}" \
@@ -79,6 +83,7 @@ runs:
           -r "${{ inputs.region }}" \
           -a "${{ inputs.access-key }}" \
           -s "${{ inputs.secret-key }}" \
+          -x "${{ inputs.aws-profile }}" \
           -t "${{ inputs.terraform-folder }}" \
           -b "${{ inputs.backend-configuration }}" \
           -p "${{ inputs.terraform-plan-file }}" \
