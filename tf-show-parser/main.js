@@ -12,14 +12,15 @@ if (!fs.existsSync(file)) {
 const tf_show_output = fs.readFileSync(file)
 const lines = tf_show_output.toString().split(`\n`).filter(x => x.length > 0)
 
-let { num_resources_to_add, num_resources_to_change, num_resources_to_delete, summary } = extractSummary(lines)
+let { num_resources_to_import, num_resources_to_add, num_resources_to_change, num_resources_to_delete, summary } = extractSummary(lines)
 let resources_to_be_deleted = extractResourcesToBeDeleted(lines)
 
+core.setOutput('resources_to_import', num_resources_to_import);
 core.setOutput('resources_to_add', num_resources_to_add);
 core.setOutput('resources_to_change', num_resources_to_change);
 core.setOutput('resources_to_delete', num_resources_to_delete);
 
-infra_changed = num_resources_to_add > 0 || num_resources_to_change > 0 || num_resources_to_delete > 0
+infra_changed = num_resources_to_import > 0 || num_resources_to_add > 0 || num_resources_to_change > 0 || num_resources_to_delete > 0
 show_summary = (infra_changed || !skip_summary_if_no_changes) && (!skip_summary)
 if (show_summary) {
     let markdownSummary = summary;
@@ -35,7 +36,7 @@ if (show_summary) {
 
 function extractSummary(lines) {
 
-    const REGEX_TF_SUMMARY = /Plan: (?<resources_to_add>[\d]+) to add, (?<resources_to_change>[\d]+) to change, (?<resources_to_delete>[\d]+) to destroy./
+    const REGEX_TF_SUMMARY = /Plan: ((?<resources_to_import>[\d]+) to import, )?(?<resources_to_add>[\d]+) to add, (?<resources_to_change>[\d]+) to change, (?<resources_to_delete>[\d]+) to destroy./
     const REGEX_TF_OUTPUTS = /Changes to Outputs:/
 
     let result
@@ -43,6 +44,7 @@ function extractSummary(lines) {
         const matchRegex = line.match(REGEX_TF_SUMMARY);
         if (matchRegex) {
             result = {
+                num_resources_to_import: matchRegex.groups?.resources_to_import,
                 num_resources_to_add: matchRegex.groups?.resources_to_add,
                 num_resources_to_change: matchRegex.groups?.resources_to_change,
                 num_resources_to_delete: matchRegex.groups?.resources_to_delete,
@@ -59,6 +61,7 @@ function extractSummary(lines) {
                 result.summary += 'Outputs changed.'
             } else {
                 result = {
+                    num_resources_to_import: 0,
                     num_resources_to_add: 0,
                     num_resources_to_change: 0,
                     num_resources_to_delete: 0,
