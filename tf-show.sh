@@ -55,6 +55,7 @@ folder="$working_folder/$tfm_folder"
 cd $folder
 
 terraform_init $backend_config_file $session_name_value
+
 terraform show -no-color "$tfm_plan"
 
 cd "$working_folder"
