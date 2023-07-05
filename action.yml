@@ -42,6 +42,9 @@ outputs:
   changes-detected:
     description: 'resources to added'
     value: ${{ steps.tf_plan.outputs.tf_detect_changes }}
+  resources-to-import:
+    description: 'resources to import'
+    value: ${{ steps.add_iac_changes_to_summary.outputs.resources_to_import }}
   resources-to-add:
     description: 'resources to added'
     value: ${{ steps.add_iac_changes_to_summary.outputs.resources_to_add }}
