@@ -1,3 +1,9 @@
+# :confetti_ball: 0.4.0.0 (2023-07-07T11:47:05.695Z)
+- - -
+## :hammer: Features
+* feat: [CLIC-8061](https://ohpen.atlassian.net/browse/CLIC-8061) - support import blocks (#18)
+- - -
+- - -
 # :confetti_ball: 0.3.0.2 (2022-12-28T08:30:47.698Z)
 - - -
 - - -
