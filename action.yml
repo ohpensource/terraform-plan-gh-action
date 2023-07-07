@@ -67,21 +67,21 @@ runs:
           -n "${{ inputs.session-name }}"
       id: tf_plan
       shell: bash
-    - id: add_iac_changes_to_summary
-      if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
-      shell: bash
-      env:
-        TEMP_FILE: tf_plan.txt
-        SKIP_SUMMARY_IF_NO_CHANGES: ${{ inputs.skip-summary-if-no-changes }}
-        SKIP_SUMMARY: ${{ inputs.skip-summary }}
-      run: |
-        ${{ github.action_path }}/tf-show.sh \
-          -r "${{ inputs.region }}" \
-          -a "${{ inputs.access-key }}" \
-          -s "${{ inputs.secret-key }}" \
-          -t "${{ inputs.terraform-folder }}" \
-          -b "${{ inputs.backend-configuration }}" \
-          -p "${{ inputs.terraform-plan-file }}" \
-          -n "${{ inputs.session-name }}" >> $TEMP_FILE
-        node ${{ github.action_path }}/dist/index.js $TEMP_FILE
+    # - id: add_iac_changes_to_summary
+    #   if: ${{ steps.tf_plan.outputs.tf_detect_changes == 'true' }}
+    #   shell: bash
+    #   env:
+    #     TEMP_FILE: tf_plan.txt
+    #     SKIP_SUMMARY_IF_NO_CHANGES: ${{ inputs.skip-summary-if-no-changes }}
+    #     SKIP_SUMMARY: ${{ inputs.skip-summary }}
+    #   run: |
+    #     ${{ github.action_path }}/tf-show.sh \
+    #       -r "${{ inputs.region }}" \
+    #       -a "${{ inputs.access-key }}" \
+    #       -s "${{ inputs.secret-key }}" \
+    #       -t "${{ inputs.terraform-folder }}" \
+    #       -b "${{ inputs.backend-configuration }}" \
+    #       -p "${{ inputs.terraform-plan-file }}" \
+    #       -n "${{ inputs.session-name }}" >> $TEMP_FILE
+    #     node ${{ github.action_path }}/dist/index.js $TEMP_FILE
       
