@@ -37,7 +37,7 @@ terraform_init() {
 
 log_action "planning terraform"
 
-while getopts r:a:s:t:b:v:p:d:n: flag
+while getopts r:a:s:t:b:v:p:d:n:e: flag
 do
     case "${flag}" in
        r) region=${OPTARG};;
@@ -49,6 +49,7 @@ do
        p) tfplan_output=${OPTARG};;
        d) destroy_mode=${OPTARG};;
        n) session_name_value=${OPTARG};;
+       e) replaced_resources=${OPTARG};;
     esac
 done
 if [[ "${destroy_mode}" == '' ]]; then
@@ -62,6 +63,7 @@ log_key_value_pair "backend-config-file" "$backend_config_file"
 log_key_value_pair "tfvars-file" "$tfvars_file"
 log_key_value_pair "tfplan-output" "$tfplan_output"
 log_key_value_pair "destroy-mode" "$destroy_mode"
+log_key_value_pair "replaced-resources" "$replaced_resources"
 
 set_up_aws_user_credentials "$region" "$access_key" "$secret_key"
 
@@ -77,7 +79,11 @@ cd $folder
     if [ "$destroy_mode" = "true" ]; then 
         terraform plan -destroy -var-file="$tfvars_file" -out="$tfplan_output" -detailed-exitcode
     else
-        terraform plan -var-file="$tfvars_file" -out="$tfplan_output" -detailed-exitcode
+        replaced=()
+        for replaced_resource in ${replaced_resources[@]}; do
+          replaced+=("--replace=$replaced_resource")
+        done
+        terraform plan -var-file="$tfvars_file" -out="$tfplan_output" -detailed-exitcode "${replaced[@]}"
     fi
     tf_plan_exit_code=$?
     set -e  # enable stop running if exit code different from 0
